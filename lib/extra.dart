@@ -1,55 +1,14 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_field.dart';
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-import 'package:random_text_reveal/random_text_reveal.dart';
 
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:multiselect/multiselect.dart';
-String generatePassword({
-  required bool isNumber ,
-  required bool isletterUpperCase ,
-  required bool isSpecialChar ,
-  required bool isletterLowerCase ,
-  required int length,
-}) {
-  final ln = length;
-  final letterLowerCase = "abcdefghijklmnopqrstuvwxyz";
-  final letterUpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  final number = '0123456789';
-  final SpecialChar = '@#%^*>\$@?/[]=+';
-
-  String chars = "";
-
-  if (isletterUpperCase) chars += '$letterUpperCase';
-  if (isNumber) chars += '$number';
-  if (isSpecialChar) chars += '$SpecialChar';
-  if (isletterLowerCase) chars += '$letterLowerCase';
-  return List.generate(ln, (index) {
-    final indexRandom = Random.secure().nextInt(chars.length);
-    return chars[indexRandom];
-  }).join('');
-}
-
-
-
-
-
-List<int> list(){
-  List<int> ls=[];
-  for(int i=8;i<=50;i++){
-    ls.add(i);
-  }
-  return ls;
-
-}
-
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -59,100 +18,197 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static List<String> fruits = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-  List<String> selectedFruits = [];
-  List<Animal> _selectedAnimals2 = [];
-  static List<Animal> _animals = [
-    Animal(id: 1, name: "Lion"),
-    Animal(id: 2, name: "Flamingo"),
-    Animal(id: 3, name: "Hippo"),
-    Animal(id: 4, name: "Horse"),
-    Animal(id: 5, name: "Tiger"),
-    Animal(id: 6, name: "Penguin"),
-    Animal(id: 7, name: "Spider"),
-    Animal(id: 8, name: "Snake"),
-    Animal(id: 9, name: "Bear"),
-    Animal(id: 10, name: "Beaver"),
-    Animal(id: 11, name: "Cat"),
-    Animal(id: 12, name: "Fish"),
-    Animal(id: 13, name: "Rabbit"),
-    Animal(id: 14, name: "Mouse"),
-    Animal(id: 15, name: "Dog"),
-    Animal(id: 16, name: "Zebra"),
-    Animal(id: 17, name: "Cow"),
-    Animal(id: 18, name: "Frog"),
-    Animal(id: 19, name: "Blue Jay"),
-    Animal(id: 20, name: "Moose"),
-    Animal(id: 21, name: "Gecko"),
-    Animal(id: 22, name: "Kangaroo"),
-    Animal(id: 23, name: "Shark"),
-    Animal(id: 24, name: "Crocodile"),
-    Animal(id: 25, name: "Owl"),
-    Animal(id: 26, name: "Dragonfly"),
-    Animal(id: 27, name: "Dolphin"),
+  static List upper = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z'
   ];
-  final _items = _animals
-      .map((animal) => MultiSelectItem<Animal>(animal, animal.name))
-      .toList();
-  final _multiSelectKey = GlobalKey<FormFieldState>();
+  List<String> selectedFruits = [];
+
+  final _items =
+      upper.map((upper) => MultiSelectItem(upper, upper.toString())).toList();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 150,
+      decoration: BoxDecoration( border: Border(bottom: BorderSide(color: Colors.transparent))) ,
+      child: MultiSelectBottomSheetField(
+        initialChildSize: 0.4,
+        listType: MultiSelectListType.CHIP,
+        buttonIcon: Icon(CupertinoIcons.add),
+        buttonText: Text('UpperCase',
+
+            style: TextStyle(
+              fontFamily: 'F2',
+              color: Colors.white60,
+              shadows: [Shadow(color: Colors.red, blurRadius: 2)],
+            )),
+        title: Text("Animals"),
+        items: _items,
+        onConfirm: (value) {
+          selectedFruits.add(value.toString());
+        },
+        chipDisplay: MultiSelectChipDisplay(
+          onTap: (value) {
+            setState(() {
+              selectedFruits.remove(value);
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
+
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: SmartDialogPage(),
+      navigatorObservers: [FlutterSmartDialog.observer],
+      builder: FlutterSmartDialog.init(),
+    );
+  }
+}
+
+class SmartDialogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Multiselect Dropdown'),
-      ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: Text('SmartDialog-EasyDemo')),
       body: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.withOpacity(.4),
-          border: Border.all(
-            color: Theme.of(context).primaryColor,
-            width: 2,
+        margin: EdgeInsets.all(30),
+        child: Wrap(spacing: 20, children: [
+          //attach
+          ElevatedButton(
+            onPressed: () => _showAttach(context),
+            child: Text('showAttach'),
           ),
-        ),
-        child: Column(
-          children: <Widget>[
-            MultiSelectBottomSheetField(
-              initialChildSize: 0.4,
-              listType: MultiSelectListType.CHIP,
 
-              buttonText: Text("Favorite Animals"),
-              title: Text("Animals"),
-              items: _items,
-              onConfirm: (values) {
 
-              },
-              chipDisplay: MultiSelectChipDisplay(
-                onTap: (value) {
-                  setState(() {
-                    _selectedAnimals2.remove(value);
-                  });
-                },
-              ),
-            ),
-            selectedFruits == null || selectedFruits.isEmpty
-                ? Container(
-                padding: EdgeInsets.all(10),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "None selected",
-                  style: TextStyle(color: Colors.black54),
-                ))
-                : Container(),
-          ],
-        ),
+        ]),
       ),
-
-        );
-
+    );
   }
 
-}
-class Animal {
-  final int id;
-  final String name;
 
-  Animal({
-    required this.id,
-    required this.name,
-  });
+  void _showAttach(BuildContext context) {
+    var attachDialog = (BuildContext context) {
+      SmartDialog.showAttach(
+        targetContext: context,
+        alignment: Alignment.bottomCenter,
+        animationType: SmartAnimationType.scale,
+        highlightBuilder: (_, __) {
+          return Positioned(child: Container());
+        },
+        scalePointBuilder: (selfSize) => Offset(selfSize.width, 0),
+        builder: (_) {
+          return Container(height: 50, width: 30, color: Colors.red);
+        },
+      );
+    };
+
+    //target widget
+    SmartDialog.show(
+      useSystem: true,
+      builder: (_) {
+        return Container(
+          height: 300,
+          width: 500,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+          ),
+          alignment: Alignment.center,
+          child: Builder(builder: (context) {
+            return ElevatedButton(
+              onPressed: () => attachDialog(context),
+              child: Text('target widget'),
+            );
+          }),
+        );
+      },
+    );
+  }
+
+
+
 }
+
+
+
+
+
+
+
+
+class MyStatefulWidget extends StatefulWidget {
+  const MyStatefulWidget({super.key});
+
+  @override
+  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  bool selected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+
+      height: 350,
+        child: Stack(
+          children: <Widget>[
+            AnimatedPositioned(
+              width: selected ? 50.0 : 50.0,
+              height: selected ? 200.0 : 50.0,
+              duration: const Duration(seconds: 2),
+              curve: Curves.fastOutSlowIn,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selected = !selected;
+                  });
+                },
+                child: Container(
+                  color: Colors.blue,
+                  child:  const Text('Tap me'),
+                ),
+              ),
+            ),
+          ],
+        ),
+    );
+  }
+}
+
+
+
+

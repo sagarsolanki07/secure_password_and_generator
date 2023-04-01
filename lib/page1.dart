@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,6 @@ import 'package:random_text_reveal/random_text_reveal.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
-import 'extra.dart';
 
 class Page1 extends StatefulWidget {
   const Page1({super.key});
@@ -18,17 +19,19 @@ class Page1 extends StatefulWidget {
 
 class _Page1State extends State<Page1> {
   final GlobalKey<RandomTextRevealState> globalKey = GlobalKey();
+  List<String> selectedFruits = [];
+
+  final password = RandomPasswordGenerator();
 
   String text = 'Genrate';
   AssetImage li = const AssetImage('assets/icons/letter-a.png');
   AssetImage ui = const AssetImage('assets/icons/letter-a (1).png');
   AssetImage ni = const AssetImage('assets/icons/123.png');
 
-
   Color _color = Colors.blue;
   final _controller = TextEditingController();
   String isOk = '';
-  final password = RandomPasswordGenerator();
+  final newpassword = RandomPasswordGenerator();
   bool isNumber = true;
   String? selectedValue;
   final List<int> items = list();
@@ -41,7 +44,6 @@ class _Page1State extends State<Page1> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-
         backgroundColor: Colors.black,
         body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Stack(children: [
@@ -83,7 +85,7 @@ class _Page1State extends State<Page1> {
             ),
           ]),
           Padding(
-            padding: const EdgeInsets.only(left: 15,right: 15),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Column(
               children: [
                 Center(
@@ -98,7 +100,6 @@ class _Page1State extends State<Page1> {
                       fontWeight: FontWeight.bold,
                       letterSpacing: 10,
                     ),
-                    randomString: Source.all,
                     curve: Curves.bounceInOut,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
@@ -106,38 +107,45 @@ class _Page1State extends State<Page1> {
                 ),
                 Text(isOk, style: TextStyle(color: _color)),
                 ElevatedButton(
-                    onPressed: () {
+                  onPressed: () {
+                    globalKey.currentState?.play();
+                    setState(() {
+                      // final newpassword = password.randomPassword(
+                      //     numbers: isNumber,
+                      //     letters: isletterLowerCase,
+                      //     passwordLength: double.parse(length.toString()),
+                      //     specialChar: isSpecialChar,
+                      //     uppercase: isletterUpperCase);
 
-                      globalKey.currentState?.play();
-                      setState(() {
-                        final password = generatePassword(
-                            isNumber: isNumber,
-                            length: length,
-                            isletterLowerCase: isletterLowerCase,
-                            isletterUpperCase: isletterUpperCase,
-                            isSpecialChar: isSpecialChar);
-                        _controller.text = password;
+                    });
+                    final newpassword = generatePassword(
+                        isNumber: isNumber,
+                        length: length,
+                        isletterLowerCase: isletterLowerCase,
+                        isletterUpperCase: isletterUpperCase,
+                        isSpecialChar: isSpecialChar);
+                    _controller.text = newpassword;
 
-                        text = password.toString();
-                        print(text);
-                      });
-                      double passwordstrength =
-                          password.checkPassword(password: _controller.text);
-                      if (passwordstrength < 0.3) {
-                        _color = Colors.red;
-                        isOk = 'This password is weak!';
-                      } else if (passwordstrength < 0.7) {
-                        _color = Colors.blue;
-                        isOk = 'This password is Good';
-                      } else {
-                        _color = Colors.green;
-                        isOk = 'This passsword is Strong';
-                      };
+                    text = _controller.text.toString();
 
-                    },
-                    child: const Text('genrate'),),
+                    double passwordstrength =
+                        password.checkPassword(password: _controller.text);
+                    if (passwordstrength < 0.3) {
+                      _color = Colors.red;
+                      isOk = 'This password is weak!';
+                    } else if (passwordstrength < 0.7) {
+                      _color = Colors.blue;
+                      isOk = 'This password is Good';
+                    } else {
+                      _color = Colors.green;
+                      isOk = 'This passsword is Strong';
+                    }
+
+                  },
+                  child: const Text('genrate'),
+                ),
                 Padding(
-                  padding: EdgeInsets.only(top: 15,bottom: 15),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: Row(
                     children: [
                       const ImageIcon(
@@ -150,7 +158,9 @@ class _Page1State extends State<Page1> {
                               style: TextStyle(
                                 fontFamily: 'F2',
                                 color: Colors.white60,
-                                shadows: [Shadow(color: Colors.red, blurRadius: 2)],
+                                shadows: [
+                                  Shadow(color: Colors.red, blurRadius: 2)
+                                ],
                               )),
                         ),
                       ),
@@ -223,7 +233,8 @@ class _Page1State extends State<Page1> {
                             scrollbarTheme: ScrollbarThemeData(
                               radius: const Radius.circular(40),
                               thickness: MaterialStateProperty.all<double>(6),
-                              thumbVisibility: MaterialStateProperty.all<bool>(true),
+                              thumbVisibility:
+                                  MaterialStateProperty.all<bool>(true),
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
@@ -236,7 +247,7 @@ class _Page1State extends State<Page1> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 15,bottom: 15),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: Row(
                     children: [
                       ImageIcon(li, color: Colors.white),
@@ -246,7 +257,9 @@ class _Page1State extends State<Page1> {
                               style: TextStyle(
                                 fontFamily: 'F2',
                                 color: Colors.white60,
-                                shadows: [Shadow(color: Colors.red, blurRadius: 2)],
+                                shadows: [
+                                  Shadow(color: Colors.red, blurRadius: 2)
+                                ],
                               )),
                         ),
                       ),
@@ -257,62 +270,67 @@ class _Page1State extends State<Page1> {
                         onChanged: (v) {
                           setState(() {
                             if (v) {
-                              li = const AssetImage('assets/icons/letter-a.png');
+                              li =
+                                  const AssetImage('assets/icons/letter-a.png');
                             } else {
                               li = const AssetImage(
                                   'assets/icons/lowercase-interface-symbol.png');
-
                             }
                             isletterLowerCase = v;
                           });
                         },
                         closeChild: ImageIcon(li),
-                        openChild:  ImageIcon(li),
+                        openChild: ImageIcon(li),
                         childOffset: 3.0,
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 15,bottom: 15),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: Row(
-                     children: [
-                       ImageIcon(ui, color: Colors.white),
-                       const Expanded(
-                         child: Center(
-                           child: Text('UpperCase',
-                               style: TextStyle(
-                                 fontFamily: 'F2',
-                                 color: Colors.white60,
-                                 shadows: [Shadow(color: Colors.red, blurRadius: 2)],
-                               )),
-                         ),
-                       ),
-                       FSwitch(
-                         open: isletterUpperCase,
-                         width: 60.0,
-                         height: 28,
-                         onChanged: (v) {
-                           setState(() {
-                             if (v) {
-                               ui = const AssetImage('assets/icons/letter-a (1).png');
-                             } else {
-                               ui = const AssetImage(
-                                   'assets/icons/uppercase-interface-button.png');
-
-                             }
-                             isletterUpperCase = v;
-                           });
-                         },
-                         closeChild: ImageIcon(ui),
-                         openChild: ImageIcon(ui),
-                         childOffset: 3.0,
-                       ),
-                     ],
-                   ),
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: ImageIcon(ui, color: Colors.white),
+                      ),
+                      const Expanded(
+                        child: Center(
+                          child: Text('UpperCase',
+                              style: TextStyle(
+                                fontFamily: 'F2',
+                                color: Colors.white60,
+                                shadows: [
+                                  Shadow(color: Colors.red, blurRadius: 2)
+                                ],
+                              )),
+                        ),
+                      ),
+                      FSwitch(
+                        open: isletterUpperCase,
+                        width: 60.0,
+                        height: 28,
+                        onChanged: (v) {
+                          setState(() {
+                            if (v) {
+                              ui = const AssetImage(
+                                  'assets/icons/letter-a (1).png');
+                            } else {
+                              ui = const AssetImage(
+                                  'assets/icons/uppercase-interface-button.png');
+                            }
+                            isletterUpperCase = v;
+                          });
+                        },
+                        closeChild: ImageIcon(ui),
+                        openChild: ImageIcon(ui),
+                        childOffset: 3.0,
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 15,bottom: 15),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: Row(
                     children: [
                       ImageIcon(ni, color: Colors.white),
@@ -322,7 +340,9 @@ class _Page1State extends State<Page1> {
                               style: TextStyle(
                                 fontFamily: 'F2',
                                 color: Colors.white60,
-                                shadows: [Shadow(color: Colors.red, blurRadius: 2)],
+                                shadows: [
+                                  Shadow(color: Colors.red, blurRadius: 2)
+                                ],
                               )),
                         ),
                       ),
@@ -336,30 +356,34 @@ class _Page1State extends State<Page1> {
                               ni = const AssetImage('assets/icons/123.png');
                             } else {
                               ni = const AssetImage('assets/icons/pin.png');
-
                             }
                             isNumber = v;
                           });
                         },
-                        closeChild:  ImageIcon(ni),
-                        openChild:  ImageIcon(ni),
+                        closeChild: ImageIcon(ni),
+                        openChild: ImageIcon(ni),
                         childOffset: 3.0,
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 15,bottom: 15),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: Row(
                     children: [
-                      const Icon(CupertinoIcons.number,color: Colors.white,),
+                      const Icon(
+                        CupertinoIcons.number,
+                        color: Colors.white,
+                      ),
                       const Expanded(
                         child: Center(
                           child: Text('Special Char',
                               style: TextStyle(
                                 fontFamily: 'F2',
                                 color: Colors.white60,
-                                shadows: [Shadow(color: Colors.red, blurRadius: 2)],
+                                shadows: [
+                                  Shadow(color: Colors.red, blurRadius: 2)
+                                ],
                               )),
                         ),
                       ),
@@ -384,5 +408,37 @@ class _Page1State extends State<Page1> {
       ),
     );
   }
+}
 
+String generatePassword({
+  required bool isNumber,
+  required bool isletterUpperCase,
+  required bool isSpecialChar,
+  required bool isletterLowerCase,
+  required int length,
+}) {
+  final ln = length;
+  const letterLowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const letterUpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const number = '0123456789';
+  const SpecialChar = '@#%^*>\$@?/[]=+';
+
+  String chars = "";
+
+  if (isletterUpperCase) chars += letterUpperCase.substring(0,length);
+  if (isNumber) chars += number;
+  if (isSpecialChar) chars += SpecialChar;
+  if (isletterLowerCase) chars += letterLowerCase;
+  return List.generate(ln, (index) {
+    final indexRandom = Random.secure().nextInt(chars.length);
+    return chars[indexRandom];
+  }).join('');
+}
+
+List<int> list() {
+  List<int> ls = [];
+  for (int i = 8; i <= 50; i++) {
+    ls.add(i);
+  }
+  return ls;
 }
